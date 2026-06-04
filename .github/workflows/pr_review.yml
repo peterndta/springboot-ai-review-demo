@@ -29,7 +29,7 @@ jobs:
           fetch-depth: 0
 
       - name: Generate PR Diff
-        shell: powershell -NoProfile
+        shell: pwsh
         run: |
           git fetch origin ${{ github.event.pull_request.base.ref }}
 
@@ -38,7 +38,7 @@ jobs:
             > pr.diff
 
       - name: Build Prompt
-        shell: powershell -NoProfile
+        shell: pwsh
         run: |
           $prompt = Get-Content ".github/prompts/review.md" -Raw
           $diff = Get-Content "pr.diff" -Raw
@@ -81,16 +81,18 @@ jobs:
           fetch-depth: 0
 
       - name: Generate Latest Diff
-        shell: powershell -NoProfile
+        shell: pwsh
         run: |
           git diff HEAD~1 HEAD > pr.diff
 
       - name: Build Prompt
-        shell: powershell -NoProfile
+        shell: pwsh
         run: |
           $prompt = Get-Content ".github/prompts/rereview.md" -Raw
           $diff = Get-Content "pr.diff" -Raw
+
           $prompt = $prompt.Replace("{{DIFF}}", $diff)
+
           Set-Content "prompt.txt" $prompt
 
       - name: Review with OpenCode
