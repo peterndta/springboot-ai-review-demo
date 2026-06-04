@@ -1,0 +1,12 @@
+spring:
+  config:
+    activate:
+      on-profile: nonprod
+logging:
+  level:
+    root: INFO
+server:
+  port: 5660
+aws:
+  account:
+    alias: aws

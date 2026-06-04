@@ -1,0 +1,355 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>3.4.5</version>
+        <relativePath/>
+        <!-- lookup parent from repository -->
+    </parent>
+
+    <groupId>com.peterndta</groupId>
+    <artifactId>springboot-ai-review-demo</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <name>springboot-ai-review-demo</name>
+    <description>springboot-ai-review-demo</description>
+    <url/>
+
+    <licenses>
+        <license/>
+    </licenses>
+
+    <developers>
+        <developer/>
+    </developers>
+
+    <properties>
+        <java.version>21</java.version>
+        <aws.sdk.version>2.31.42</aws.sdk.version>
+        <spring.cloud.aws>3.3.1</spring.cloud.aws>
+        <maven.build.timestamp.format>yyyy-MM-dd-HH-mm-ss</maven.build.timestamp.format>
+        <image.version>${project.version}-${maven.build.timestamp}</image.version>
+        <docker.jvm.version>amazoncorretto:${java.version}-alpine</docker.jvm.version>
+        <jacoco.version>0.8.13</jacoco.version>
+        <spring.framework.version>6.2.6</spring.framework.version>
+        <sonar.inclusions>src/main/java/com/peterndta/springbootaireviewdemo/**</sonar.inclusions>
+        <sonar.exclusions>**/model/**, **/exception/**</sonar.exclusions>
+        <sonar.test.exclusions>**/test/**/*</sonar.test.exclusions>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-framework-bom</artifactId>
+                <version>${spring.framework.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <!-- AWS Dependencies -->
+            <dependency>
+                <groupId>software.amazon.awssdk</groupId>
+                <artifactId>bom</artifactId>
+                <version>${aws.sdk.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>io.awspring.cloud</groupId>
+                <artifactId>spring-cloud-aws</artifactId>
+                <version>${spring.cloud.aws}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
+        </dependency>
+
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>s3</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>sts</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>io.awspring.cloud</groupId>
+            <artifactId>spring-cloud-aws-starter-sqs</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>io.awspring.cloud</groupId>
+            <artifactId>spring-cloud-aws-starter-parameter-store</artifactId>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                        </path>
+                    </annotationProcessorPaths>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <excludes>
+                        <exclude>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                        </exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+
+            <!-- Start - gitflow-maven-plugin -->
+            <!-- https://github.com/aleksandr-m/gitflow-maven-plugin -->
+            <!-- https://aleksandr-m.github.io/gitflow-maven-plugin/plugin-info.html -->
+            <plugin>
+                <groupId>com.amashchenko.maven.plugin</groupId>
+                <artifactId>gitflow-maven-plugin</artifactId>
+                <version>1.21.0</version>
+                <configuration>
+                    <installProject>false</installProject>
+                    <verbose>false</verbose>
+                    <gitFlowConfig>
+                        <developmentBranch>develop</developmentBranch>
+                        <productionBranch>main</productionBranch>
+                        <featureBranchPrefix>feature/</featureBranchPrefix>
+                        <releaseBranchPrefix>release/</releaseBranchPrefix>
+                        <hotfixBranchPrefix>hotfix/</hotfixBranchPrefix>
+                        <supportBranchPrefix>support/</supportBranchPrefix>
+                        <origin>origin</origin>
+                    </gitFlowConfig>
+                    <commitMessages>
+                    </commitMessages>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.gmavenplus</groupId>
+                <artifactId>gmavenplus-plugin</artifactId>
+                <version>3.0.2</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.codehaus.groovy</groupId>
+                        <artifactId>groovy-all</artifactId>
+                        <version>3.0.22</version>
+                        <type>pom</type>
+                        <scope>runtime</scope>
+                    </dependency>
+                </dependencies>
+                <executions>
+                    <execution>
+                        <id>add-dynamic-properties</id>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>execute</goal>
+                        </goals>
+                        <configuration>
+                            <scripts>
+                                <script><![CDATA[
+                                    log.info("*** Running Plugin gmavenplus-plugin - execution: add-dynamic-properties ");
+                                    // Get current Git commit hash
+                                    def gitCommit = 'git rev-parse --short HEAD'.execute().text.trim()
+                                    instance = "${project.version}-${maven.build.timestamp}-${gitCommit}"
+                                    imageversionlocal = instance.toLowerCase()
+                                    project.properties.setProperty('imageversionlc', imageversionlocal)
+                                ]]>                                </script>
+                            </scripts>
+                        </configuration>
+                    </execution>
+
+                    <execution>
+                        <id>save-container-id-to-file</id>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>execute</goal>
+                        </goals>
+                        <configuration>
+                            <scripts>
+                                <script><![CDATA[
+                                    log.info("*** Running Plugin gmavenplus-plugin - execution: save-container-id-to-file  - ${imageversionlc}  ");
+                                    String fName = "CONTAINER_VERSION.txt"
+                                    log.info("*** Deleting file $fName");
+                                    def file = new File(fName)
+                                    file.delete()
+                                    log.info("*** Creating file $fName");
+                                    new FileWriter(fName, true).with {
+                                        write("${imageversionlc}")
+                                        flush()
+                                    }
+                                    def current_script = getClass().protectionDomain.codeSource.location.path
+                                    log.info("*** Current Path:  $current_script");
+                                ]]>                                </script>
+                            </scripts>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- End - gmavenplus-plugin -->
+
+            <!-- Unzip New Relic Java agent into target/ -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>3.1.1</version>
+                <executions>
+                    <execution>
+                        <id>unpack-newrelic</id>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>unpack-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <includeGroupIds>com.newrelic.agent.java</includeGroupIds>
+                            <includeArtifactIds>newrelic-java</includeArtifactIds>
+                            <overWriteReleases>false</overWriteReleases>
+                            <overWriteSnapshots>false</overWriteSnapshots>
+                            <overWriteIfNewer>true</overWriteIfNewer>
+                            <outputDirectory>${project.build.directory}</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Start - jib-maven-plugin -->
+            <!-- Jib is a Maven plugin for building Docker and OCI images for your Java applications. -->
+            <!-- https://github.com/GoogleContainerTools/jib/tree/master/jib-maven-plugin#quickstart -->
+            <plugin>
+                <groupId>com.google.cloud.tools</groupId>
+                <artifactId>jib-maven-plugin</artifactId>
+                <version>3.4.3</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>build</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <from>
+                        <image>${docker.registry}/${docker.jvm.version}</image>
+                        <platforms>
+                            <platform>
+                                <architecture>amd64</architecture>
+                                <os>linux</os>
+                            </platform>
+                            <platform>
+                                <architecture>arm64</architecture>
+                                <os>linux</os>
+                            </platform>
+                        </platforms>
+                    </from>
+
+                    <to>
+                        <image>${docker.registry}/${project.name}:${imageversionlc}</image>
+                    </to>
+
+                    <!-- Start - Main App Container -->
+                    <container>
+                        <mainClass>com.peterndta.springbootaireviewdemo.SpringbootAiReviewDemoApplication</mainClass>
+                        <workingDirectory>/app</workingDirectory>
+                        <jvmFlags>
+                            <jvmFlag>-Dspring.profiles.active=${ENVIRONMENT_NAME}</jvmFlag>
+                            <jvmFlag>-Dnewrelic.environment=${ENVIRONMENT_NAME}</jvmFlag>
+                            <jvmFlag>-javaagent:/usr/local/newrelic/newrelic.jar</jvmFlag>
+                        </jvmFlags>
+                        <environment>
+                            <ENVIRONMENT_NAME>nonprod</ENVIRONMENT_NAME>
+                        </environment>
+                    </container>
+                    <!-- End - Main App Container -->
+
+                    <extraDirectories>
+                        <paths>
+                            <path>
+                                <from>target/newrelic</from>
+                                <into>/usr/local/newrelic</into>
+                                <includes>newrelic.jar</includes>
+                            </path>
+                            <path>
+                                <from>target/classes</from>
+                                <into>/usr/local/newrelic</into>
+                                <includes>newrelic.yml</includes>
+                            </path>
+                        </paths>
+                    </extraDirectories>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>${jacoco.version}</version>
+                <executions>
+                    <!-- Prepare agent before tests -->
+                    <execution>
+                        <id>prepare-agent</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+
+                    <!-- Generate report after tests -->
+                    <execution>
+                        <id>report</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <excludes>
+                        <exclude>sun/*</exclude>
+                        <exclude>com/sun/*</exclude>
+                        <exclude>jdk/*</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>
+
