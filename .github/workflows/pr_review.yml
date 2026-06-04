@@ -70,7 +70,7 @@ jobs:
             });
 
   re-review:
-    if: github.event_name == 'issue_comment' && contains(github.event.comment.body, '@opencode')
+    if: github.event_name == 'issue_comment' && contains(github.event.comment.body, '/opencode review')
     runs-on:
       - self-hosted
       - ai-review
