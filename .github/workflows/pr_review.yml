@@ -29,9 +29,8 @@ jobs:
           fetch-depth: 0
 
       - name: Generate PR Diff
-        shell: powershell
+        shell: pwsh
         run: |
-          Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process -Force
           git fetch origin ${{ github.event.pull_request.base.ref }}
 
           git diff `
@@ -39,9 +38,8 @@ jobs:
             > pr.diff
 
       - name: Build Prompt
-        shell: powershell
+        shell: pwsh
         run: |
-          Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process -Force
           $prompt = Get-Content ".github/prompts/review.md" -Raw
           $diff = Get-Content "pr.diff" -Raw
 
@@ -83,15 +81,13 @@ jobs:
           fetch-depth: 0
 
       - name: Generate Latest Diff
-        shell: powershell
+        shell: pwsh
         run: |
-          Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process -Force
           git diff HEAD~1 HEAD > pr.diff
 
       - name: Build Prompt
-        shell: powershell
+        shell: pwsh
         run: |
-          Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process -Force
           $prompt = Get-Content ".github/prompts/rereview.md" -Raw
           $diff = Get-Content "pr.diff" -Raw
 
