@@ -1,0 +1,16 @@
+# Git ignore for AI Review Repo
+
+# Generated files from workflows
+*.diff
+
+# OS specific files
+.DS_Store
+Thumbs.db
+
+# IDE/Editor files
+.vscode/
+
+# Temporary files
+*~
+*.tmp
+*.log
