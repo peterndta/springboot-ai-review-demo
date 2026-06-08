@@ -5,8 +5,7 @@ import com.peterndta.springbootaireviewdemo.model.GreetingResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.Instant;
-import java.time.ZoneId;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 
 @Service
@@ -17,8 +16,8 @@ public class GreetingService {
     private static final ZoneId VIETNAM_TIMEZONE = ZoneId.of("Asia/Ho_Chi_Minh");
 
     public GreetingResponse generateGreeting(GreetingRequest request) {
-        String greetingType = "general";
         String message = "Hello!";
+        String greetingType = "general";
 
         if (request.getName() != null && !request.getName().isBlank()) {
             message = "Hello, " + request.getName() + "!";
